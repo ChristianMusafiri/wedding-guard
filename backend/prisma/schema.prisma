@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Les Utilisateurs du système (Admin / Vigiles)
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String   // Mot de passe crypté
+  role      Role     @default(SCANNER) // ADMIN (Le boss) ou SCANNER (L'hôte/vigile)
+
+  isActive  Boolean  @default(false)  // activation utilisateur
+  canEdit   Boolean  @default(false) 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ScanLog   ScanLog[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  SCANNER
+  MC
+}
+
+// 2. La liste des Invités du mariage
+model Guest {
+  id              String    @id @default(uuid())
+  firstName       String    // Prénom
+  lastName        String    // Nom de famille
+  allowedSeats    Int       @default(1) // Nombre de personnes autorisées avec ce ticket
+  checkedInSeats  Int       @default(0) //checkin en partiel
+  qrCodeToken     String    @unique // Le jeton crypté unique associé à l'invitation
+  status          String    @default("CONFIRMED") // CONFIRMED, PENDING, DECLINED
+
+  tableNumber     String?
+  isVip           Boolean   @default(false)
+  guestCategory   String?
+
+  isCheckedIn     Boolean   @default(false) // Est-il déjà entré ?
+  checkInTime     DateTime? // Heure exacte de l'entrée
+  checkedInBy     String?   // Qui a scanné cet invité (nom du scanner)
+  scans           ScanLog[]
+}
+
+// 3. L'historique des scans pour la traçabilité et les stats en temps réel
+model ScanLog {
+  id         String   @id @default(uuid())
+  scannedAt  DateTime @default(now())
+  status     String   // "SUCCESS" (Entré valide), "ALREADY_SCANNED" (Fraude potentielle), "INVALID_TOKEN" (Faux QR code)
+  guestId    String?
+  guest      Guest?   @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  scannedById String?
+  scannedBy  User?    @relation(fields: [scannedById], references: [id], onDelete: SetNull)
+  notes      String?  // Informations supplémentaires (ex: "Scan réussi via USB")
+}
+
+model AuditLog {
+  id         String    @id @default(uuid())
+  action     String    // Create, update delete
+  targetName String    // nom de tel invité
+  userName   String    // nom user ayant effectué lqction
+  details    String    // raison(description de modification)
+  createdAt  DateTime  @default(now())
+}

@@ -1,0 +1,19 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { GuestsController } from './guests.controller';
+import { describe, expect, it, beforeEach} from '@jest/globals';
+
+describe('GuestsController', () => {
+  let controller: GuestsController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [GuestsController],
+    }).compile();
+
+    controller = module.get<GuestsController>(GuestsController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+});
