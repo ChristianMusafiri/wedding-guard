@@ -13,6 +13,6 @@ async function bootstrap() {
 
   app.enableCors(); // Active le CORS pour que notre futur Frontend React puisse communiquer avec le Backend
   
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

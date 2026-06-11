@@ -35,7 +35,7 @@ const UsersAdmin: React.FC = () => {
       setUsers(response.data);
     } catch (err: any) {
       setError("Impossible de charger les utilisateurs.");
-    } {
+    } finally {
       setLoading(false);
     }
   };
