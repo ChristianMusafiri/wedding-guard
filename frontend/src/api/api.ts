@@ -1,7 +1,13 @@
 import axios from 'axios';
 
-// 1. Définir l'URL de base de notre API NestJS
-const API_URL = 'http://localhost:3000';
+// 1. Définir l'URL de base de notre API NestJS + ajout de Vite build for render
+const API_URL =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? 'http://localhost:3000' : undefined);
+
+if(!API_URL){
+  throw new Error('VITE_API_URL est manquante. Configure-la dans Render frontend');
+}
 
 const api = axios.create({
   baseURL: API_URL,
