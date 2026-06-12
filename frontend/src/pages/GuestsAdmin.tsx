@@ -52,8 +52,8 @@ const GuestsAdmin: React.FC = () => {
     try {
       setLoading(true);
       const response = await api.get('/guests');
-      const sorted = response.data.sort((a: Guest, b: Guest) => a.firstName.localeCompare(b.firstName)); // tri alphabet
-      setGuests(response.data);
+      const sorted = [...response.data].sort((a: Guest, b: Guest) => a.firstName.localeCompare(b.firstName)); // tri alphabet
+      setGuests(sorted);
     } catch (err: any) {
       setError("Impossible de charger la liste des invités.");
     } finally {
