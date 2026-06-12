@@ -11,7 +11,11 @@ async function bootstrap() {
     transform: true, // Transforme les types automatiquement
   }));
 
-  app.enableCors(); // Active le CORS pour que notre futur Frontend React puisse communiquer avec le Backend
+  app.enableCors({
+    origin: ['https://wedding-guard-frontend.onrender.com', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  }); // Active le CORS pour que notre futur Frontend React puisse communiquer avec le Backend
   
   await app.listen(process.env.PORT || 3000);
 }
